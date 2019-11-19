@@ -1,62 +1,83 @@
 const { BotkitConversation } = require('botkit');
-
-
-/**
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * Licensed under the MIT License.
- */
-
-function isValidIp(ip) {
-    if (ip) return true;
-    return false;
-}
-
-// const request = require('request-promise-native')
-// require('dotenv').config();
-
-// let bodyData = {
-//     "ins_api": {
-//         "version": "1.0",
-//         "type": "cli_show",
-//         "chunk": "0",
-//         "sid": "1",
-//         "input": "show interface brief",
-//         "output_format": "json"
-//     }
-// };
-
-// let url = 'http://112.216.179.85:1102/ins';
-
-
-
-// class APIService {
-//     async showInterfaceBrief() {
-//         const options = {
-//             url: url,
-//             method: 'POST',
-//             headers: {
-//                 'Content-Type': 'application/json',
-//                 'Authorization': 'Basic YWRtaW46ITIzNFF3ZXI='
-//             },
-//             body : bodyData
-//         }
-//         const result = await request.post(options);
-//         return result;
-//     }
-
-//     showLoggingLog() {
-
-//     }
-// }
-
-// const service = new APIService();
-// module.exports = new APIService();
 const service = require('../util/api_service.js');
+const util = require('../util/util.js');
+
 
 
 module.exports = function( controller ) {
 
     let memberships = [];
+
+    /**
+     * help : 명령어 보여준다.
+     */
+    controller.interrupts('help', 'message,direct_message', async(bot, message) => {
+        // start a help dialog, then eventually resume any ongoing dialog
+        // await bot.beginDialog(HELP_DIALOG);
+        await bot.reply(message,{text: '도움말: 명령어를 보여줄거에요!', markdown: '*Available Command!*'}); 
+    });
+    
+    /**
+     * quit : conversation을 종료한다.
+     */
+    controller.interrupts('quit', 'message,direct_message', async(bot, message) => {
+        await bot.reply(message, '필요한 게 있으면 말씀해주세요!');
+    
+        // cancel any active dialogs
+        await bot.cancelAllDialogs();
+    });
+
+    /**
+     * 인사말에 대한 응답.
+     */
+    controller.hears(['hi','hello','howdy','hey','aloha','hola','bonjour','oi'], 'message,direct_message', async (bot,message) => {
+        if (!message.personEmail.endsWith('@cisco.com')) return;
+        await bot.reply(message,'Hello, ' + message.personEmail);
+        await bot.reply(message, {markdown: '궁금한게 있으면 `help`를 외쳐주세요.'} )
+    });
+
+
+    /**
+     * nexus list, nexus add, nexus delete.
+     */
+    controller.hears('nexus list', 'message,direct_message', async (bot,message) => {
+        // console.log(bot, message)
+        const userId = message.personEmail;
+
+        const nexusList = util.nexus.get(userId);
+        let response = '등록된 넥서스 장비:\n'
+        if (Object.entries(nexusList).length == 0) {
+            await bot.reply(message, '등록된 장비가 없습니다.');
+        } else {
+            for (var i in nexusList) {
+                response += `> ip: \`${i}\`, \`${nexusList[i].chassis_id}\`, hostname: \`${nexusList[i].host_name}\`<br>`
+            }
+            await bot.reply(message, {
+                markdown: response
+            });
+        }
+    });
+
+    controller.hears('nexus add', 'message,direct_message', async (bot,message) => {
+        await bot.beginDialog(util.constants.DIALOG_NEXUS_ADD);
+    });
+
+    controller.hears('nexus del', 'message,direct_message', async (bot,message) => {
+        await bot.beginDialog(util.constants.DIALOG_NEXUS_DELETE, {
+            key: 'ddd'
+        });
+    });
+
+
+    /**
+     * 
+     */
+    controller.hears(['status', 'brief'], 'message,direct_message', async (bot,message) => {
+        await bot.reply(message,'넥서스 상태값 표시합니다.');
+        const result = await service.showInterfaceBrief();
+        await bot.reply(message,result);
+    });
+
 
     controller.hears(new RegExp(/^cli (.*?)$/i), 'message,direct_message', async(bot, message) => {
 
@@ -64,22 +85,8 @@ module.exports = function( controller ) {
         const command = message.matches[1];
 
         const result = await service.cli(command);
-        console.log('######', command, result);
         await bot.reply(message, '' + result);
     
-    });
-
-    controller.interrupts('help', 'message,direct_message', async(bot, message) => {
-        // start a help dialog, then eventually resume any ongoing dialog
-        // await bot.beginDialog(HELP_DIALOG);
-        await bot.reply(message,{text: '도움말: 명령어를 보여줄거에요!', markdown: '*Available Command!*'}); 
-    });
-    
-    controller.interrupts('quit', 'message,direct_message', async(bot, message) => {
-        await bot.reply(message, 'Quitting!');
-    
-        // cancel any active dialogs
-        await bot.cancelAllDialogs();
     });
 
     controller.hears(async(message) => { return message.intent==="help" }, 'message', async(bot, message) => { 
@@ -88,23 +95,14 @@ module.exports = function( controller ) {
     });
 
 
-    controller.hears(['hi','hello','howdy','hey','aloha','hola','bonjour','oi'],['message', 'direct_message'], async (bot,message) => {
-        if (!message.personEmail.endsWith('@cisco.com')) return;
-        await bot.reply(message,'Hello, ' + message.personEmail);
-        await bot.reply(message, {markdown: '궁금한게 있으면 `help`를 외쳐주세요.'} )
+    
 
-    });
-
-    controller.hears(['status', 'brief'],['message', 'direct_message'], async (bot,message) => {
-        await bot.reply(message,'넥서스 상태값 표시합니다.');
-        const result = await service.showInterfaceBrief();
-        await bot.reply(message,result);
-    });
+    
 
     
 
 
-    controller.hears(['error'],['message', 'direct_message'], async (bot,message) => {
+    controller.hears(['error'], 'message,direct_message', async (bot,message) => {
         let response = '# warning\n![warning](https://www.google.com/favicon.ico)\n## Error occured';
         await bot.reply(message,{text: 'Available Command!', markdown: response});
         
@@ -159,7 +157,6 @@ module.exports = function( controller ) {
         // message.matches is the result of message.text.match(regexp) so in this case the parameter is in message.matches[1]
         let param = message.matches[1];
         let ip = message.matches[2];
-        console.log(param, '####', ip);
         switch (param) {
             case 'add':
                 if (isValidIp(ip)) {
@@ -186,7 +183,6 @@ module.exports = function( controller ) {
         // message.matches is the result of message.text.match(regexp) so in this case the parameter is in message.matches[1]
         let param = message.matches[1];
         let ip = message.matches[2];
-        console.log(param, '####', ip);
         switch (param) {
             case 'list':
                 await bot.reply(message, '스위치 목록.');
@@ -231,33 +227,7 @@ module.exports = function( controller ) {
         await bot.reply(message,'Welcome to the channel!');
     });
 
-    // Log every message received
-    controller.middleware.receive.use(function(bot, message, next) {
-
-        // log it
-        console.log('RECEIVED: ', message);
-
-        // modify the message
-        message.logged = true;
-
-        // continue processing the message
-        next();
-
-    });
-
-    // Log every message sent
-    controller.middleware.send.use(function(bot, message, next) {
-
-        // log it
-        console.log('SENT: ', message);
-
-        // modify the message
-        message.logged = true;
-
-        // continue processing the message
-        next();
-
-    });
+    
 
     
     // sending alert sample.
@@ -272,81 +242,4 @@ module.exports = function( controller ) {
         
     }, 60000);
 
-    
-    // setInterval(async() => {
-    //     if(saved_reference) {
-
-
-    //         console.log(saved_reference)
-
-    //         let bot = await controller.spawn();
-    //         bot.changeContext(saved_reference);
-    //         bot.say('Hello!');
-    //     }
-    //     // let bot = await controller.spawn();
-    //     // // await bot.changeContext(reference);
-
-    //     // await bot.say('Breaking news!');
-    // }, 1000);
-
-
-
-
-
-    
-    // controller.hears('sample','message,direct_message', async(bot, message) => {
-    //     await bot.reply(message, 'I heard a sample message.');
-    // });
-
-    
-
-    // controller.on('message,direct_message', async(bot, message) => {
-    //     await bot.reply(message, `Echo: ${ message.text }`);
-    // });
-
-
-    // controller.hears('.*','message,direct_message', async(bot, message) => {
-
-    //     await bot.reply(message, 'I heard: ' + message.text);
-    
-    // });
-    
-    // controller.on('event', async(bot, message) => {
-    //     await bot.reply(message,'I received an event of type ' + message.type);
-    // });
-
-
-
-    // controller.hears(async (message) => message.text && message.text.toLowerCase() === 'foo', ['message'], async (bot, message) => {
-    //     await bot.reply(message, 'I heard "foo" via a function test');
-    // });
-
-    // // controller.hears(pattern, event, handler)
-
-    // // use a regular expression to match the text of the message
-    // controller.hears(new RegExp(/^\d+$/), ['message','direct_message'], async function(bot, message) {
-    //     await bot.reply(message,{ text: 'I heard a number using a regular expression.' });
-    // });
-
-    // // match any one of set of mixed patterns like a string, a regular expression
-    // controller.hears(['allcaps', new RegExp(/^[A-Z\s]+$/)], ['message','direct_message'], async function(bot, message) {
-    //     await bot.reply(message,{ text: 'I HEARD ALL CAPS!' });
-    // });
-
-    // controller.on('message,direct_message', async(bot, message) => { 
-
-    //     await bot.reply(message, {
-    //         text: 'Here is a menu!',
-    //         quick_replies: [
-    //             {
-    //                 title: "Main",
-    //                 payload: "main-menu",
-    //             },
-    //             {
-    //                 title: "Help",
-    //                 payload: "help"
-    //             }
-    //         ]
-    //     });
-    // });
 }

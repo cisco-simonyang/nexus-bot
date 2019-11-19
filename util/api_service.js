@@ -1,7 +1,7 @@
-const request = require('request-promise-native')
 require('dotenv').config();
+const request = require('request-promise-native')
 
-
+const port = 1102;
 const options = {
     url: 'http://112.216.179.85:1102/ins',
     method: 'POST',
@@ -14,8 +14,8 @@ const options = {
             "version": "1.0",
             "type": "cli_show",
             "chunk": "0",
-            "sid": "1",
-            input: "",
+            "sid": "sid",
+            "input": "",
             "output_format": "json"
         }
     }
@@ -25,17 +25,52 @@ const options = {
 
 class APIService {
 
+    async test(ip) {
+        
+        let statusCode;
+        let result = await request({
+            method: 'GET',
+            url : `http://${ip}:${port}`,
+            headers: {
+                'Authorization': 'Basic YWRtaW46ITIzNFF3ZXI='
+            }
+        }).on('response', (res) => {
+            statusCode = res.statusCode;
+        }).then(() => {
+            if (statusCode == 200) {
+                return true;
+            } else {
+                return false;
+            }
+        });
+
+        return result;
+    }
+
+
     // cli command
     async cli(command) {
         options.json.ins_api.input = command;
         const result = await request.post(options);
-        console.log('@@@@@@@', result);
         if (result.ins_api.outputs.output.body) {
             const body = JSON.stringify(result.ins_api.outputs.output.body);
-            console.log('length ==== ', body.length);
             return body;
         } else {
             return 'Invalid command';
+        }
+    }
+
+    async showVersion(ip) {
+        if (ip) {
+            options.url = `http://${ip}:${port}/ins`;
+        }
+        options.json.ins_api.input = 'show version';
+        const result = await request.post(options);
+        if (result.ins_api.outputs.output.code == '200') {
+            console.log(JSON.stringify(result))
+            return result.ins_api.outputs.output.body;
+        } else {
+            throw new Error('Network Error');
         }
     }
 
@@ -44,20 +79,23 @@ class APIService {
         options.json.ins_api.input = 'show interface brief';
         const result = await request.post(options);
 
-        const interfaces = result.ins_api.outputs.output.body.TABLE_interface.ROW_interface;
-        let total_interface = 0;
-        let up_interface = 0;
-        let down_interface = 0;
-        for (let i in interfaces) {
-            total_interface ++;
-            if (interfaces[i]['state'] == 'up' ) {
-                up_interface ++;
-            } else {
-                down_interface ++;
+        if (result.ins_api.outputs.output.code == '200') {
+            const interfaces = result.ins_api.outputs.output.body.TABLE_interface.ROW_interface;
+            let total_interface = 0;
+            let up_interface = 0;
+            let down_interface = 0;
+            for (let i in interfaces) {
+                total_interface ++;
+                if (interfaces[i]['state'] == 'up' ) {
+                    up_interface ++;
+                } else {
+                    down_interface ++;
+                }
             }
+            return 'total: ' + total_interface + ', up : ' + up_interface + ', down: ' + down_interface
+        } else {
+            throw new Error('Network Error');
         }
-        return 'total: ' + total_interface + ', up : ' + up_interface + ', down: ' + down_interface
-        // return result;
     }
 
     async showLoggingLog() {
