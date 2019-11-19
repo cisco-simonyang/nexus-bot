@@ -1,0 +1,99 @@
+{
+    "ins_api": {
+      "type": "cli_show",
+      "version": "1.0",
+      "sid": "eoc",
+      "outputs": {
+        "output": {
+          "input": "show environment",
+          "msg": "Success",
+          "code": "200",
+          "body": {
+            "fandetails": {
+              "fan_filter_status": "NotSupported",
+              "TABLE_faninfo": {
+                "ROW_faninfo": [
+                  {
+                    "fanname": "Fan1(sys_fan1)",
+                    "fanmodel": "N9K-9000v-FAN",
+                    "fanhwver": "--",
+                    "fandir": "front-to-back",
+                    "fanstatus": "Ok"
+                  },
+                  {
+                    "fanname": "Fan2(sys_fan2)",
+                    "fanmodel": "N9K-9000v-FAN",
+                    "fanhwver": "--",
+                    "fandir": "front-to-back",
+                    "fanstatus": "Ok"
+                  },
+                  {
+                    "fanname": "Fan3(sys_fan3)",
+                    "fanmodel": "N9K-9000v-FAN",
+                    "fanhwver": "--",
+                    "fandir": "front-to-back",
+                    "fanstatus": "Ok"
+                  },
+                  {
+                    "fanname": "Fan_in_PS1",
+                    "fanmodel": "",
+                    "fanhwver": "--",
+                    "fandir": "none",
+                    "fanstatus": "None"
+                  },
+                  {
+                    "fanname": "Fan_in_PS2",
+                    "fanmodel": "",
+                    "fanhwver": "--",
+                    "fandir": "none",
+                    "fanstatus": "None"
+                  }
+                ]
+              },
+              "TABLE_fan_zone_speed": {
+                "ROW_fan_zone_speed": {
+                  "zone": "1",
+                  "zonespeed": "0x0"
+                }
+              }
+            },
+            "powersup": {
+              "voltage_level": 12,
+              "power_summary": {
+                "ps_redun_mode": "PS-Redundant",
+                "ps_oper_mode": "PS-Redundant",
+                "tot_pow_capacity": " 180.00 W",
+                "tot_gridA_capacity": "   0.00 W",
+                "tot_gridB_capacity": "   0.00 W",
+                "cumulative_power": "   0.00 W",
+                "tot_pow_out_actual_draw": "   0.00 W",
+                "tot_pow_input_actual_draw": "   0.00 W",
+                "tot_pow_alloc_budgeted": "   N/A   ",
+                "available_pow": "   N/A   "
+              },
+              "TABLE_psinfo": {
+                "ROW_psinfo": [
+                  {
+                    "psnum": 1,
+                    "psmodel": "------------",
+                    "actual_out": "    0 W",
+                    "actual_input": "    0 W",
+                    "tot_capa": "    0 W",
+                    "ps_status": "Absent"
+                  },
+                  {
+                    "psnum": 2,
+                    "psmodel": "------------",
+                    "actual_out": "    0 W",
+                    "actual_input": "    0 W",
+                    "tot_capa": "    0 W",
+                    "ps_status": "Absent"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    }
+  }
