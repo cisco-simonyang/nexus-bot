@@ -25,62 +25,91 @@ module.exports = function( controller ) {
      * 
      */
     controller.hears(['status', 'brief'], 'message,direct_message', async (bot,message) => {
-        await bot.reply(message,'넥서스 상태값 표시합니다.');
-        const result = await service.showInterfaceBrief();
-        await bot.reply(message,result);
+        // await bot.reply(message,'넥서스 상태값 표시합니다.');
+        // const result = await service.showInterfaceBrief();
+
+        let data = {
+            "nic": [
+                {
+                    "status": "up",
+                    "interface": "mgmt0",
+                    "ip_addr": "192.168.10.4",
+                    "speed": "1000",
+                    "mtu": "1500"
+                },
+                {
+                    "interface": "Ethernet1/1",
+                    "vlan": "1",
+                    "type": "eth",
+                    "portmode": "trunk",
+                    "state": "down",
+                    "state_rsn_desc": "XCVR not inserted",
+                    "speed": "auto",
+                    "ratemode": "D"
+                }
+            ]
+        };
+        // samplecards['brief']['content'] = util.adaptive.bind(samplecards['brief'], data);
+
+        console.log('##############', JSON.stringify(samplecards['brief']['content']));
+
+        await bot.reply(message, {
+            text: "cards not supported on this platform yet",
+            attachments: samplecards['brief']
+        }); 
     });
 
     
-    // /**
-    //  * quit : conversation을 종료한다.
-    //  */
-    // controller.interrupts('quit', 'message,direct_message', async(bot, message) => {
-    //     await bot.reply(message, '필요한 게 있으면 말씀해주세요!');
+    /**
+     * quit : conversation을 종료한다.
+     */
+    controller.interrupts('quit', 'message,direct_message', async(bot, message) => {
+        await bot.reply(message, '필요한 게 있으면 말씀해주세요!');
     
-    //     // cancel any active dialogs
-    //     await bot.cancelAllDialogs();
-    // });
+        // cancel any active dialogs
+        await bot.cancelAllDialogs();
+    });
 
-    // /**
-    //  * 인사말에 대한 응답.
-    //  */
-    // controller.hears(['hi','hello','howdy','hey','aloha','hola','bonjour','oi'], 'message,direct_message', async (bot,message) => {
-    //     if (!message.personEmail.endsWith('@cisco.com')) return;
-    //     await bot.reply(message,'Hello, ' + message.personEmail);
-    //     await bot.reply(message, {markdown: '궁금한게 있으면 `help`를 외쳐주세요.'} )
-    // });
+    /**
+     * 인사말에 대한 응답.
+     */
+    controller.hears(['hi','hello','howdy','hey','aloha','hola','bonjour','oi'], 'message,direct_message', async (bot,message) => {
+        if (!message.personEmail.endsWith('@cisco.com')) return;
+        await bot.reply(message,'Hello, ' + message.personEmail);
+        await bot.reply(message, {markdown: '궁금한게 있으면 `help`를 외쳐주세요.'} )
+    });
 
 
-    // /**
-    //  * nexus list, nexus add, nexus delete.
-    //  */
-    // controller.hears('nexus list', 'message,direct_message', async (bot,message) => {
-    //     // console.log(bot, message)
-    //     const userId = message.personEmail;
+    /**
+     * nexus list, nexus add, nexus delete.
+     */
+    controller.hears('nexus list', 'message,direct_message', async (bot,message) => {
+        // console.log(bot, message)
+        const userId = message.personEmail;
 
-    //     const nexusList = util.nexus.get(userId);
-    //     let response = '등록된 넥서스 장비:\n'
-    //     if (Object.entries(nexusList).length == 0) {
-    //         await bot.reply(message, '등록된 장비가 없습니다.');
-    //     } else {
-    //         for (var i in nexusList) {
-    //             response += `> ip: \`${i}\`, \`${nexusList[i].chassis_id}\`, hostname: \`${nexusList[i].host_name}\`<br>`
-    //         }
-    //         await bot.reply(message, {
-    //             markdown: response
-    //         });
-    //     }
-    // });
+        const nexusList = util.nexus.get(userId);
+        let response = '등록된 넥서스 장비:\n'
+        if (Object.entries(nexusList).length == 0) {
+            await bot.reply(message, '등록된 장비가 없습니다.');
+        } else {
+            for (var i in nexusList) {
+                response += `> ip: \`${i}\`, \`${nexusList[i].chassis_id}\`, hostname: \`${nexusList[i].host_name}\`<br>`
+            }
+            await bot.reply(message, {
+                markdown: response
+            });
+        }
+    });
 
-    // controller.hears('nexus add', 'message,direct_message', async (bot,message) => {
-    //     await bot.beginDialog(util.constants.DIALOG_NEXUS_ADD);
-    // });
+    controller.hears('nexus add', 'message,direct_message', async (bot,message) => {
+        await bot.beginDialog(util.constants.DIALOG_NEXUS_ADD);
+    });
 
-    // controller.hears('nexus del', 'message,direct_message', async (bot,message) => {
-    //     await bot.beginDialog(util.constants.DIALOG_NEXUS_DELETE, {
-    //         key: 'ddd'
-    //     });
-    // });
+    controller.hears('nexus del', 'message,direct_message', async (bot,message) => {
+        await bot.beginDialog(util.constants.DIALOG_NEXUS_DELETE, {
+            key: 'ddd'
+        });
+    });
 
 
     
