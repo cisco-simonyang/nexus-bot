@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "cisco-connect-259514",
+  "private_key_id": "8bfbcfdd5fe1e93011d96fe76b4b76cbecee7e67",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQDsq33qYmRQbtSQ\nSNRpkawWVqxJWo8nSvkgGXnQTj1ymhsBveBaCO7SMH1Jm1MvjW4JfyPRqpkCOt8g\nWxwA345sFS6+pfu3KfMgBwIny2Eth1do9NjTyBYBYyPkqg/q8N/EQi3XiHpQAIHK\nFy0P3N20DbUMs7QXkOevTK1vAgCy+E3Uxm6IdMyZlFRbNdSqrhA8Zxjt/jMBSSfH\n59WhK8g/mPh3J0Ddn9lBajHYXpqZ79k46U1JrJ0Be0LSoZoQuuGOi4Ydp4SQPBOX\nVcw7MnAbTLzwxczMqwNTVtBHKLg5+ayp4lyILDUya3B925ryWS3j8W70+T6TbKh6\ngC0h0IoNAgMBAAECggEAOZocpaMIbM4oxKxBLKeUlYRHXvwgSu0zuLUSoZklWgL5\nb0FWPTue2sAMAlIAW1rGDSApaOKnZnRLMa4TIQBIQvSd4a921hPq9WDXTLWyo3jl\nFKnBKzxv5KsLRaCBispRAAymaSaxtE6HSFc/M7TrLeNHLT4Ap1qwlQkpzhKT9nrC\nbS0eervqBkzWDI35skn5JZ0n2GtePgABOAQs6cPb+A/3OmuTOIjkeZSfgyvtvDAh\nfKSLPYMdxurPY7IKxXFevNKd1GSgioZJ8YGVJElackvUdQUNXp8L4pMK0c+B7q5M\nHF7m02oZBMoW+6ZrG7E8L2HlB5gWFLW7sKm04BSZsQKBgQD5CLnw3gyUqkZIPuuU\nLr4IsJbvnY1vlpMDT8sjsb5k9RuaF4JzvYA0dkziyveTvsdpIj8Y0qgKKqx70WCu\ngovmawCXVh8pP/GUiQBhi3zsp69lJZuRyghWrNiDwrBOCLSYxhMbj6fzu53Av6Fn\nLybXnVLw3IcnLGJrJcorOfDkcQKBgQDzSjp8aHtcfOUaSbORa8kBonIqKePxfBjY\nxp6Tc0v+ShHI611vcocGmljISfAO3eutD1FYZQVQs/aL/8pJmeOohHafsBTGItJe\n/hlp5uxOcSqqeHNAyAIh1EFgh4fShchE02kxRwP2Pgn71mQs3hPv+Z7uatuEYp4L\nTG5ezZjdXQKBgCoQnUfgWgOql2CQsD5Bfvv8yCIFXOSibIa8rbWDyoNHG7h1jCV8\ntvElomsUmaktKoXJsRrCSnwdJTFs9oXDq1nqbRkjBPR0xpuuYJAZfaqD0I6nQZXo\nqGvrmk73TcyAj/DWVFftdhMnd8gdFmhVgJwfCOmCdpnZV2593Z5blSMhAoGAC065\n5SpeAXB0nYIrbGjcEM1iDP+hboncBcdFe4jyUUFUDkiSMSnbiL0Hv1dgZvB9ka+S\nkk8vrg6POPaMilsyr5RohweCD6typ6ObvsZS2Vp9JysuACbLopLg7wGdmHVLV5eT\n3gx07K75e9D9GvC/cHnjnyUsSrzip5fH0XQw1KkCgYAdcP++9mUJwi9lzrjF7rh9\ntojxIVKkM7oSDyjFps9vG0EFEf9ykBpbkjirPtog6aWIEpZRppKhilO506LKazqs\nNeQ1r5dPIFEJdVollIVbJyQwoN2N32XEjtbISELeAjwlaD9TnJhw7habuzpmCtG7\nCsReT1UiIjhgsSxoCv1TwQ==\n-----END PRIVATE KEY-----\n",
+  "client_email": "dialogflow@cisco-connect-259514.iam.gserviceaccount.com",
+  "client_id": "110239854600402228668",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/dialogflow%40cisco-connect-259514.iam.gserviceaccount.com"
+}

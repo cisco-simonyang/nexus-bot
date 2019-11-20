@@ -73,6 +73,11 @@ controller.ready(() => {
 
 
 
+controller.ready(async function () {
+    await controller.adapter.registerAdaptiveCardWebhookSubscription('/api/messages');
+});
+
+
 controller.webserver.get('/', (req, res) => {
 
     res.send(`This app is running Botkit ${ controller.version }.`);
