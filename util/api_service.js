@@ -7,7 +7,9 @@ const options = {
     method: 'POST',
     headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Basic YWRtaW46ITIzNFF3ZXI='
+        // 'Authorization': 'Basic YWRtaW46ITIzNFF3ZXI='
+        'Authorization': 'Basic YWRtaW46Q2lzY28xMjM='
+
     },
     json : {
         ins_api: {
@@ -24,6 +26,10 @@ const options = {
 
 
 class APIService {
+
+    getUrl(ip, port) {
+        return `http://${ip}:${port}/ins`;
+    }
 
     // async test(ip) {
     //     let statusCode;
@@ -58,14 +64,12 @@ class APIService {
         }
     }
 
-    async showVersion(ip) {
-        if (ip) {
-            options.url = `http://${ip}:${port}/ins`;
-        }
+    async showVersion(ip, port) {
+        options.url = this.getUrl(ip, port);
         options.json.ins_api.input = 'show version';
         const result = await request.post(options);
         if (result.ins_api.outputs.output.code == '200') {
-            console.log(JSON.stringify(result))
+            // console.log(JSON.stringify(result))
             return result.ins_api.outputs.output.body;
         } else {
             throw new Error('Network Error');
@@ -73,7 +77,8 @@ class APIService {
     }
 
     // up port and 
-    async showInterfaceBrief() {
+    async showInterfaceBrief(ip, port) {
+        options.url = this.getUrl(ip, port);
         options.json.ins_api.input = 'show interface brief';
         const result = await request.post(options);
 
@@ -104,7 +109,8 @@ class APIService {
     }
 
     // up port and 
-    async showSystemResources() {
+    async showSystemResources(ip, port) {
+        options.url = this.getUrl(ip, port);
         options.json.ins_api.input = 'show system resources';
         const result = await request.post(options);
 
@@ -115,17 +121,6 @@ class APIService {
         }
     }
 
-    async showLoggingLog() {
-        options.json.ins_api.input = 'show logging log';
-        const result = await request.post(options);
-        return result;
-    }
-
-    async showLoggingLog() {
-        options.json.ins_api.input = 'show logging log';
-        const result = await request.post(options);
-        return result;
-    }
 
 }
 

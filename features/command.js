@@ -41,6 +41,7 @@ module.exports = function (controller) {
     controller.hears(['status', 'brief'], 'message,direct_message', async (bot, message) => {
         const userId = message.personEmail;
         const nexusList = util.nexus.get(userId);
+        //console.log('brief ===> ', nexusList);
 
         if (Object.entries(nexusList).length == 0) {
             await bot.reply(message, '등록된 장비가 없습니다.');
@@ -48,8 +49,8 @@ module.exports = function (controller) {
             for (let i in nexusList) {
                 const data = {
                     info: nexusList[i],
-                    nic: await service.showInterfaceBrief(),
-                    system: await service.showSystemResources()
+                    nic: await service.showInterfaceBrief(nexusList[i].ip, nexusList[i].port),
+                    system: await service.showSystemResources(nexusList[i].ip, nexusList[i].port)
                 }
 
                 data.system.cpu_usage = (parseFloat(data.system.cpu_state_user) + parseFloat(data.system.cpu_state_kernel)).toFixed(2);
@@ -64,8 +65,8 @@ module.exports = function (controller) {
                     }
                 }
                 let obj = Object.assign({}, cards['brief']);
-                obj['content'] = util.adaptive.bind(cards['brief'], data);
-
+                obj['content'] = util.adaptive.bind(obj, data);
+                // console.log('brief ====', JSON.stringify(obj));
                 await bot.reply(message, {
                     text: "cards not supported on this platform yet",
                     attachments: obj
@@ -110,9 +111,14 @@ module.exports = function (controller) {
     });
 
     controller.hears('add', 'message,direct_message', async (bot, message) => {
+        let obj = Object.assign({}, cards['nexus_del']);
+        obj['content'] = util.adaptive.bind(cards['nexus_add'], {
+            userId: message.personEmail
+        });
+
         await bot.reply(message, {
             text: "cards not supported on this platform yet",
-            attachments: cards['nexus_add']
+            attachments: obj
         });
     });
 
@@ -131,9 +137,12 @@ module.exports = function (controller) {
             });
         }
         let obj = Object.assign({}, cards['nexus_del']);
-        obj['content'] = util.adaptive.bind(cards['nexus_del'], array);
+        obj['content'] = util.adaptive.bind(cards['nexus_del'], {
+            userId: message.personEmail,
+            nexus: array
+        });
 
-        console.log(JSON.stringify(cards['nexus_del']));
+        // console.log(JSON.stringify(cards['nexus_del']));
         
         await bot.reply(message, {
             text: "cards not supported on this platform yet",

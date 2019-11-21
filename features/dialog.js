@@ -40,9 +40,6 @@ module.exports = function(controller) {
      */
     const nexus_delete = new BotkitConversation(util.constants.DIALOG_NEXUS_DELETE, controller);
     // await console.log('nexus delete config ===> ', nexus_delete.getConfig())
-    nexus_delete.before(util.constants.DIALOG_NEXUS_DELETE, async(convo, bot) => {
-        console.log('before ====> ', convo);
-    });
     nexus_delete.say('넥서스 장비를 삭제합니다.' + JSON.stringify(nexus_delete.script));
     nexus_delete.ask('삭제하려는 넥서스 장비의 IP주소를 입력하세요.', async(response, convo, bot) => {
         const userId = bot._config.activity.from.name;
