@@ -25,27 +25,25 @@ const options = {
 
 class APIService {
 
-    async test(ip) {
-        
-        let statusCode;
-        let result = await request({
-            method: 'GET',
-            url : `http://${ip}:${port}`,
-            headers: {
-                'Authorization': 'Basic YWRtaW46ITIzNFF3ZXI='
-            }
-        }).on('response', (res) => {
-            statusCode = res.statusCode;
-        }).then(() => {
-            if (statusCode == 200) {
-                return true;
-            } else {
-                return false;
-            }
-        });
-
-        return result;
-    }
+    // async test(ip) {
+    //     let statusCode;
+    //     let result = await request({
+    //         method: 'GET',
+    //         url : `http://${ip}:${port}`,
+    //         headers: {
+    //             'Authorization': 'Basic YWRtaW46ITIzNFF3ZXI='
+    //         }
+    //     }).on('response', (res) => {
+    //         statusCode = res.statusCode;
+    //     }).then(() => {
+    //         if (statusCode == 200) {
+    //             return true;
+    //         } else {
+    //             return false;
+    //         }
+    //     });
+    //     return result;
+    // }
 
 
     // cli command
@@ -81,20 +79,39 @@ class APIService {
 
         if (result.ins_api.outputs.output.code == '200') {
             const interfaces = result.ins_api.outputs.output.body.TABLE_interface.ROW_interface;
-            let total_interface = 0;
-            let up_interface = 0;
-            let down_interface = 0;
+            let total_count = 0;
+            let up_count = 0;
+            let down_count = 0;
             for (let i in interfaces) {
-                total_interface ++;
+                total_count ++;
                 if (interfaces[i]['state'] == 'up' ) {
-                    up_interface ++;
+                    up_count ++;
                 } else {
-                    down_interface ++;
+                    down_count ++;
                 }
             }
-            return 'total: ' + total_interface + ', up : ' + up_interface + ', down: ' + down_interface
+            return {
+                count: {
+                    total: total_count,
+                    up: up_count,
+                    down: down_count
+                },
+                interfaces: interfaces
+            };
         } else {
-            throw new Error('Network Error');
+            throw new Error('[Network Error] show interfacebrief');
+        }
+    }
+
+    // up port and 
+    async showSystemResources() {
+        options.json.ins_api.input = 'show system resources';
+        const result = await request.post(options);
+
+        if (result.ins_api.outputs.output.code == '200') {
+            return result.ins_api.outputs.output.body;
+        } else {
+            throw new Error('[Network Error] show system resources');
         }
     }
 

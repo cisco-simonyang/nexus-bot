@@ -25,7 +25,7 @@ module.exports = function(controller) {
         const ip = response;
         try {
             let result = await api.showVersion(response);
-            util.nexus.add(userId, ip, result);
+            util.nexus.add(userId, ip, '1102', result);
             nexus_add.say('성공적으로 nexus 장비가 추가되었습니다.');
         } catch(e) {
             console.log('error :::', e);
