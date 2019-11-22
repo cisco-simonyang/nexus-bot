@@ -8,7 +8,7 @@ const cards = require('../lib/response_card');
 module.exports = function (controller) {
 
     /**
-     * 
+     * test : show a test layout
      */
     // controller.hears(['test'], 'message,direct_message', async (bot, message) => {
     //     await bot.reply(message, {
@@ -28,7 +28,7 @@ module.exports = function (controller) {
     });
 
     /**
-     * alarm
+     * alarm on / off
      */
     controller.hears(['alarm on'], 'message,direct_message', async (bot, message) => {
         await bot.reply(message, {
@@ -42,7 +42,7 @@ module.exports = function (controller) {
     });
 
     /**
-     * 
+     * show brief information of nexus
      */
     controller.hears(['status', 'brief'], 'message,direct_message', async (bot, message) => {
         const userId = message.personEmail;
@@ -52,7 +52,7 @@ module.exports = function (controller) {
         if (Object.entries(nexusList).length == 0) {
             util.warn(bot, message, 'No nexus is registered.');
         } else {
-            util.info(bot, message, 'Nothing has been changed.');
+            // util.info(bot, message, 'Nothing has been changed.'); // TODO
             for (let i in nexusList) {
                 const data = {
                     userId: message.personEmail,
@@ -86,7 +86,7 @@ module.exports = function (controller) {
 
 
     /**
-     * quit : conversation을 종료한다.
+     * quit : quit conversation
      */
     controller.interrupts('quit', 'message,direct_message', async (bot, message) => {
         util.success(bot, message, 'Bye! See ya~!')
@@ -98,7 +98,7 @@ module.exports = function (controller) {
 
 
     /**
-     * nexus 
+     * list : show the list of nexus 
      */
     controller.hears('list', 'message,direct_message', async (bot, message) => {
         // console.log(bot, message)
@@ -118,6 +118,9 @@ module.exports = function (controller) {
         }
     });
 
+    /**
+     * add : adds new nexus device
+     */
     controller.hears('add', 'message,direct_message', async (bot, message) => {
         let obj = Object.assign({}, cards['nexus_del']);
         obj['content'] = util.adaptive.bind(cards['nexus_add'], {
@@ -130,6 +133,9 @@ module.exports = function (controller) {
         });
     });
 
+    /**
+     * del : delete existing nexus
+     */
     controller.hears('del', 'message,direct_message', async (bot, message) => {
         let array = [];
         const data = util.nexus.get(message.personEmail);
@@ -161,6 +167,8 @@ module.exports = function (controller) {
         }
     });
 
-
+    controller.on('message,direct_message', async(bot, message) => {
+        await bot.reply(message, 'Sorry. I cannot understand. Type `help` to see commands.');
+    });
 
 }

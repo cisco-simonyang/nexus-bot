@@ -139,9 +139,7 @@ module.exports = function(controller) {
     //     }
     // });
 
-    // controller.on('message,direct_message', async(bot, message) => {
-    //     await bot.reply(message, 'Sorry. I cannot understand.');
-    // });
+    
 
 
     // controller.on('alert', async(bot, message) => {

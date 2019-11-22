@@ -1,5 +1,6 @@
 const util = require('../util/util');
 const api = require('../util/api_service');
+const cards = require('../lib/response_card');
 
 module.exports = function (controller) {
 
@@ -8,6 +9,7 @@ module.exports = function (controller) {
     controller.on('attachmentActions', async (bot, message) => {
         let markdown = "Thanks.  Received:  \n```\n" + JSON.stringify(message.value) + "\n```\n";
         let userId;
+        let params;
 
         console.log('submit message arrived!!!!!', message.value);
 
@@ -32,25 +34,24 @@ module.exports = function (controller) {
                     }
                     util.success(bot, message, 'Nexus has been removed.');
                     break;
-                // case 'view_interface':
-                //     const params = message.value;
-                //     params.endpoint = api.getEndpoint(params.ip, params.port);
-                //     const data = {
-                //         info: params,
-                //         detail: await api.showInterfaceDetail(params.ip, params.port, params.interface)
-                //     };
-                //     let obj = Object.assign({}, cards['view_interface']);
-                //     obj['content'] = util.adaptive.bind(obj, data);
-                //     await bot.reply(message, {
-                //         text: "cards not supported on this platform yet",
-                //         attachments: obj
-                //     });
-
-
-                //     break;
-                // case 'config_interface':
-                //     const params = message.value;
-                //     break;
+                case 'view_interface':
+                    params = message.value;
+                    params.endpoint = api.getEndpoint(params.ip, params.port);
+                    const data = {
+                        info: params,
+                        detail: await api.showInterfaceDetail(params.ip, params.port, params.interface)
+                    };
+                    let obj = Object.assign({}, cards['view_interface']);
+                    obj['content'] = util.adaptive.bind(obj, data);
+                    console.log(JSON.stringify(obj));
+                    await bot.reply(message, {
+                        text: "cards not supported on this platform yet",
+                        attachments: obj
+                    });
+                    break;
+                case 'config_interface':
+                    params = message.value;
+                    break;
                 default:
                     break;
 
