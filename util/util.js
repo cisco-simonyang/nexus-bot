@@ -1,8 +1,33 @@
 var ACData = require("adaptivecards-templating");
-var AdaptiveCards = require("adaptivecards");
+// var AdaptiveCards = require("adaptivecards");
+const cards = require('../lib/response_card');
 
 
 let util = {
+    info: async function (bot, message, msg) {
+        let obj = Object.assign({}, cards['msg_info']);
+        obj['content'] = util.adaptive.bind(cards['msg_info'], {
+            message: msg
+        });
+        // console.log(obj)
+        await bot.reply(message, {
+            text: "cards not supported on this platform yet",
+            attachments: obj
+        });
+        return;
+    },
+    warn: async function (bot, message, msg) {
+        let obj = Object.assign({}, cards['msg_warning']);
+        obj['content'] = util.adaptive.bind(cards['msg_warning'], {
+            message: msg
+        });
+        // console.log(obj)
+        await bot.reply(message, {
+            text: "cards not supported on this platform yet",
+            attachments: obj
+        });
+        return;
+    },
     success: async function (bot, message, msg) {
         let obj = Object.assign({}, cards['msg_success']);
         obj['content'] = util.adaptive.bind(cards['msg_success'], {
@@ -15,7 +40,7 @@ let util = {
         });
         return;
     },
-    erorr: async function (bot, message, msg) {
+    error: async function (bot, message, msg) {
         let obj = Object.assign({}, cards['msg_error']);
         obj['content'] = util.adaptive.bind(cards['msg_error'], {
             message: msg

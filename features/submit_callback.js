@@ -1,4 +1,3 @@
-const cards = require('../lib/response_card');
 const util = require('../util/util');
 const api = require('../util/api_service');
 
@@ -6,21 +5,16 @@ module.exports = function (controller) {
 
     let alarmSetting;
 
-
-    
-
-    
-
     controller.on('attachmentActions', async (bot, message) => {
         let markdown = "Thanks.  Received:  \n```\n" + JSON.stringify(message.value) + "\n```\n";
         let userId;
-        
+
         console.log('submit message arrived!!!!!', message.value);
 
         try {
             switch (message.value.command) {
                 case 'alarm_on':
-                    util.success(bot, message, 'Alarm has turned on.')
+                    util.success(bot, message, 'Alarm has been turned on.')
                     break;
                 case 'add_nexus':
                     userId = message.value.userId;
@@ -38,6 +32,25 @@ module.exports = function (controller) {
                     }
                     util.success(bot, message, 'Nexus has been removed.');
                     break;
+                // case 'view_interface':
+                //     const params = message.value;
+                //     params.endpoint = api.getEndpoint(params.ip, params.port);
+                //     const data = {
+                //         info: params,
+                //         detail: await api.showInterfaceDetail(params.ip, params.port, params.interface)
+                //     };
+                //     let obj = Object.assign({}, cards['view_interface']);
+                //     obj['content'] = util.adaptive.bind(obj, data);
+                //     await bot.reply(message, {
+                //         text: "cards not supported on this platform yet",
+                //         attachments: obj
+                //     });
+
+
+                //     break;
+                // case 'config_interface':
+                //     const params = message.value;
+                //     break;
                 default:
                     break;
 
