@@ -33,7 +33,7 @@ let util = {
         obj['content'] = util.adaptive.bind(cards['msg_success'], {
             message: msg
         });
-        // console.log(obj)
+        console.log(JSON.stringify(obj));
         await bot.reply(message, {
             text: "cards not supported on this platform yet",
             attachments: obj
@@ -57,7 +57,7 @@ let util = {
     },
     nexus: {
         _list: {},
-        
+
         _user_init: function (userId) {
             if (util.nexus._list[userId] == undefined) {
                 util.nexus._list[userId] = {};
@@ -67,7 +67,7 @@ let util = {
             util.nexus._user_init(userId);
             switchInfo.ip = ip;
             switchInfo.port = port;
-            util.nexus._list[userId][ip+':'+port] = switchInfo;
+            util.nexus._list[userId][ip + ':' + port] = switchInfo;
             // console.log('\n\n\nadd ===>\n\n\n', ip, port, util.nexus._list);
         },
         delete: function (userId, ip, port) {
@@ -92,30 +92,22 @@ let util = {
         }
     },
     alarm: {
-        _action: function(userId) {
-            return async () => {
-                const nexusList = util.nexus.get(userId);
-                const config = util.alarm.get(userId);
-                for (let i in nexusList) {
-                    // TODO
-                }
-            };
-        },
-        _list: {},
-        _user_init: function (userId) {
-            if (util.alarm._list[userId] == undefined) {
-                util.alarm._list[userId] = {};
+        reference: {
+            _ref: {},
+            put: function (userId, reference) {
+                util.alarm.reference._ref[userId] = reference;
+            },
+            get: function (userId) {
+                return util.alarm.reference._ref[userId]
             }
         },
-        on: function(userId, config) {
-            config.timerId = setInterval(_action(userId), config.interval);
-            util.alarm._list[userId] = config;
+        _list: {},
+        on: function (userId, alarmId) {
+            util.alarm._list[userId] = alarmId;
         },
-        get: function(userId) {
-            return util.alarm._list[userId];
-        },
-        off: function(userId) {
-            clearInterval(util.alarm.get(userId).timerId);
+        off: function (userId) {
+            const alarmId = util.alarm._list[userId];
+            clearInterval(alarmId);
             util.alarm._list[userId] = {};
         }
     },

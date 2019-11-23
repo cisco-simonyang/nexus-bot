@@ -16,13 +16,21 @@ module.exports = function (controller) {
         try {
             switch (message.value.command) {
                 case 'alarm_on':
-                    util.success(bot, message, 'Alarm has been turned on.')
+                    userId = message.value.userId;
+                    const reference = util.alarm.reference.get(userId);
+                    const alarmId = setInterval(async () => {
+                        let bot = await controller.spawn();
+                        await bot.changeContext(reference);
+                        await bot.say('ALERT! A trigger was detected');
+                    }, message.value.interval * 1000);
+                    util.alarm.on(userId, alarmId);
+                    await util.success(bot, message, 'Alarm has been turned on.')
                     break;
                 case 'add_nexus':
                     userId = message.value.userId;
                     let result = await api.showVersion(message.value.ip_addr, message.value.port);
                     util.nexus.add(userId, message.value.ip_addr, message.value.port, result);
-                    util.success(bot, message, 'Nexus has been added.')
+                    await util.success(bot, message, 'Nexus has been added.')
                     break;
                 case 'del_nexus':
                     userId = message.value.userId;
@@ -32,14 +40,15 @@ module.exports = function (controller) {
                         const target = JSON.parse(message.value.target);
                         util.nexus.delete(userId, target.ip, target.port);
                     }
-                    util.success(bot, message, 'Nexus has been removed.');
+                    await util.success(bot, message, 'Nexus has been removed.');
                     break;
                 case 'view_interface':
                     params = message.value;
                     params.endpoint = api.getEndpoint(params.ip, params.port);
+                    detail = await api.showInterfaceDetail(params.ip, params.port, params.interface);
                     const data = {
                         info: params,
-                        detail: await api.showInterfaceDetail(params.ip, params.port, params.interface)
+                        detail: Object.assign({eth_ip_addr: '', eth_ip_mask: '', hw_addr: ''}, detail)
                     };
                     let obj = Object.assign({}, cards['view_interface']);
                     obj['content'] = util.adaptive.bind(obj, data);

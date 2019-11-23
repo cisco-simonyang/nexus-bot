@@ -10,12 +10,12 @@ module.exports = function (controller) {
     /**
      * test : show a test layout
      */
-    // controller.hears(['test'], 'message,direct_message', async (bot, message) => {
-    //     await bot.reply(message, {
-    //         text: "cards not supported on this platform yet",
-    //         attachments: cards['test']
-    //     });
-    // });
+    controller.hears(['test'], 'message,direct_message', async (bot, message) => {
+        await bot.reply(message, {
+            text: "cards not supported on this platform yet",
+            attachments: cards['test']
+        });
+    });
 
     /**
      * 인사말에 대한 응답.
@@ -31,14 +31,22 @@ module.exports = function (controller) {
      * alarm on / off
      */
     controller.hears(['alarm on'], 'message,direct_message', async (bot, message) => {
+        const userId = message.personEmail;
+        util.alarm.reference.put(userId, message.reference);
+
+        let obj = Object.assign({}, cards['alarm_on']);
+        obj['content'] = util.adaptive.bind(cards['alarm_on'], {
+            userId: userId
+        });
         await bot.reply(message, {
             text: "cards not supported on this platform yet",
-            attachments: cards['alarm_on']
+            attachments: obj
         });
     });
 
     controller.hears(['alarm off'], 'message,direct_message', async (bot, message) => {
-        util.success(bot, message, 'Alarm has been turned off.');
+        util.alarm.off(message.personEmail);
+        await util.success(bot, message, 'Alarm has been turned off.');
     });
 
     /**
@@ -56,7 +64,7 @@ module.exports = function (controller) {
             for (let i in nexusList) {
                 const data = {
                     userId: message.personEmail,
-                    info: nexusList[i],
+                    info: Object.assign({bios_ver_str: '', nxos_ver_str: ''}, nexusList[i]),
                     nic: await service.showInterfaceBrief(nexusList[i].ip, nexusList[i].port),
                     system: await service.showSystemResources(nexusList[i].ip, nexusList[i].port)
                 }
@@ -74,7 +82,7 @@ module.exports = function (controller) {
                 }
                 let obj = Object.assign({}, cards['brief']);
                 obj['content'] = util.adaptive.bind(obj, data);
-                // console.log('brief ====', JSON.stringify(obj));
+                console.log('brief ====', JSON.stringify(obj));
                 await bot.reply(message, {
                     text: "cards not supported on this platform yet",
                     attachments: obj
@@ -89,7 +97,7 @@ module.exports = function (controller) {
      * quit : quit conversation
      */
     controller.interrupts('quit', 'message,direct_message', async (bot, message) => {
-        util.success(bot, message, 'Bye! See ya~!')
+        await util.success(bot, message, 'Bye! See ya~!')
 
         // cancel any active dialogs
         await bot.cancelAllDialogs();
