@@ -98,7 +98,7 @@ let util = {
                 util.alarm.reference._ref[userId] = reference;
             },
             get: function (userId) {
-                return util.alarm.reference._ref[userId]
+                return util.alarm.reference._ref[userId];
             }
         },
         _list: {},
