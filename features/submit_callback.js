@@ -17,14 +17,44 @@ module.exports = function (controller) {
             switch (message.value.command) {
                 case 'alarm_on':
                     userId = message.value.userId;
-                    const reference = util.alarm.reference.get(userId);
-                    const alarmId = setInterval(async () => {
-                        let bot = await controller.spawn();
-                        await bot.changeContext(reference);
-                        await bot.say('ALERT! A trigger was detected');
-                    }, message.value.interval * 1000);
-                    util.alarm.on(userId, alarmId);
-                    await util.success(bot, message, 'Alarm has been turned on.')
+                    let nexusList = util.nexus.get(userId);
+                    if (Object.entries(nexusList).length == 0) {
+                        await util.warn(bot, message, 'No nexus is registered. Please add nexus before alarm setup.');
+                    } else {
+                        const reference = util.alarm.reference.get(userId);
+                        let msg = '';
+                        let alarmOn = false;
+                        if (message.value.cpu || message.value.cpu == 'true') {
+                            msg = `CPU usage exceeded the threshold value(${message.value.cpu_threshold}%)`;
+                            alarmOn = true;
+                        } else if (message.value.memory || message.value.memory == 'true') {
+                            msg = `Memory usage exceeded the threshold value(${message.value.memory_threshold}%)`;
+                            alarmOn = true;
+                        } else if (message.value.port_change || message.value.port_change == 'true') {
+                            msg = `Port on Nexus`;
+                            alarmOn = true;
+                        }
+
+                        if (alarmOn) {
+                            const alarmId = setInterval(async () => {
+                                let bot = await controller.spawn();
+                                await bot.changeContext(reference);
+                                let obj = Object.assign({}, cards['msg_warning']);
+                                obj['content'] = util.adaptive.bind(cards['msg_warning'], {
+                                    message: msg
+                                });
+                                await bot.say({
+                                    text: "cards not supported on this platform yet",
+                                    attachments: obj
+                                });
+                            }, message.value.interval * 1000);
+                            util.alarm.on(userId, alarmId);
+                            await util.success(bot, message, 'Alarm has been turned on.')
+                        } else {
+                            await util.warn(bot, message, 'No alarm condition is configured.');
+                        }
+                    }
+
                     break;
                 case 'add_nexus':
                     userId = message.value.userId;
@@ -48,7 +78,7 @@ module.exports = function (controller) {
                     detail = await api.showInterfaceDetail(params.ip, params.port, params.interface);
                     const data = {
                         info: params,
-                        detail: Object.assign({eth_ip_addr: '', eth_ip_mask: '', hw_addr: ''}, detail)
+                        detail: Object.assign({ eth_ip_addr: '', eth_ip_mask: '', hw_addr: '', eth_mode: '' }, detail)
                     };
                     let obj = Object.assign({}, cards['view_interface']);
                     obj['content'] = util.adaptive.bind(obj, data);
