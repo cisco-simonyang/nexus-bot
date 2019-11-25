@@ -6,8 +6,8 @@ let options = {
     method: 'POST',
     headers: {
         'Content-Type': 'application/json',
-        // 'Authorization': 'Basic YWRtaW46ITIzNFF3ZXI='
-        'Authorization': 'Basic YWRtaW46Q2lzY28xMjM='
+        'Authorization': 'Basic YWRtaW46ITIzNFF3ZXI='
+        // 'Authorization': 'Basic YWRtaW46Q2lzY28xMjM='
 
     },
     json: {
