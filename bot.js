@@ -20,7 +20,7 @@ require('dotenv').config();
 let storage = null;
 if (process.env.MONGO_URI) {
     storage = mongoStorage = new MongoDbStorage({
-        url : process.env.MONGO_URI,
+        url: process.env.MONGO_URI,
     });
 }
 
@@ -29,10 +29,10 @@ const adapter = new WebexAdapter({
     // REMOVE THIS OPTION AFTER YOU HAVE CONFIGURED YOUR APP!
     enable_incomplete: true,
 
-    
+
     access_token: process.env.ACCESS_TOKEN,
     public_address: process.env.PUBLIC_ADDRESS
-})    
+})
 
 
 const controller = new Botkit({
@@ -58,7 +58,7 @@ controller.ready(() => {
 
     /* catch-all that uses the CMS to trigger dialogs */
     if (controller.plugins.cms) {
-        controller.on('message,direct_message', async (bot, message) => {
+        controller.on('message,direct_message', async(bot, message) => {
             let results = false;
             results = await controller.plugins.cms.testTrigger(bot, message);
 
@@ -73,7 +73,7 @@ controller.ready(() => {
 
 
 
-controller.ready(async function () {
+controller.ready(async function() {
     await controller.adapter.registerAdaptiveCardWebhookSubscription('/api/messages');
 });
 
@@ -83,8 +83,3 @@ controller.webserver.get('/', (req, res) => {
     res.send(`This app is running Botkit ${ controller.version }.`);
 
 });
-
-
-
-
-

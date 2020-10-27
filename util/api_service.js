@@ -2,12 +2,15 @@ require('dotenv').config();
 const request = require('request-promise-native')
 
 let options = {
+    strictSSL: false,
     url: '',
     method: 'POST',
     headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Basic YWRtaW46ITIzNFF3ZXI='
-        // 'Authorization': 'Basic YWRtaW46Q2lzY28xMjM='
+        // 'Authorization': 'Basic YWRtaW46ITIzNFF3ZXI='
+        'Authorization': 'Basic YWRtaW46QWRtaW5fMTIzNCE='
+            //  'Basic YWRtaW46QWRtaW5fMTIzNCE='
+            // 'Authorization': 'Basic YWRtaW46Q2lzY28xMjM='
 
     },
     json: {
@@ -31,7 +34,13 @@ class APIService {
     }
 
     getUrl(ip, port) {
-        return `http://${ip}:${port}/ins`;
+        var protocol = 'http';
+        if (port == 443) {
+            protocol = 'https';
+        }
+        // return `${protocol}://${ip}:${port}/ins`;
+
+        return 'https://sbx-nxos-mgmt.cisco.com/ins';
     }
 
     async showVersion(ip, port) {
@@ -148,4 +157,3 @@ class APIService {
 }
 
 module.exports = new APIService();
-
