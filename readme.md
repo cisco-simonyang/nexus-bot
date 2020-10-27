@@ -7,7 +7,7 @@ This chatbot is based on Botkit (https://botkit.ai/).
 
 1. ngrok (https://ngrok.com/download)
 2. nodejs (https://nodejs.org/en/download/)
-3. WebEx chatbot (https://developer.webex.com/my-apps/)
+3. Nexus switch with `nxapi` feature enabled (https://www.cisco.com/c/en/us/td/docs/switches/datacenter/nexus9000/sw/6-x/programmability/guide/b_Cisco_Nexus_9000_Series_NX-OS_Programmability_Guide/b_Cisco_Nexus_9000_Series_NX-OS_Programmability_Guide_chapter_011.html#concept_9EB6BD38857C4AF7A3DF685DCCBF7552)
 
 
 ## How to run a chatbot
